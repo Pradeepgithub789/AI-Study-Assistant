@@ -1609,7 +1609,7 @@ const ChatView: React.FC<{
 
     try {
       const documentContext = rawContent || summary;
-      const response = await axios.post('https://ai-study-assistant-xa02.onrender.com/api/chat', {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/chat`, {
         documentContext,
         question: questionText,
         history: messages,
@@ -1621,7 +1621,13 @@ const ChatView: React.FC<{
       setMessages(updatedMessages);
       saveChatHistory(updatedMessages);
     } catch (err: any) {
-      toast.error(err.response?.data?.error || "Failed to get reply from AI Study Assistant.");
+      let errMsg = "Failed to get reply from AI Study Assistant.";
+      if (!err.response) {
+        errMsg = "Backend server is unavailable. If it was inactive, Render might be spinning up (takes about 50 seconds). Please try again in a moment.";
+      } else if (err.response.data?.error) {
+        errMsg = err.response.data.error;
+      }
+      toast.error(errMsg);
       setMessages(messages);
     } finally {
       setIsSending(false);

@@ -247,9 +247,9 @@ export const Dashboard: React.FC = () => {
 
     try {
       const isTopic = !notes.includes('\n') && notes.trim().length < 300;
-      // API call to local Express backend on :5000
+      // API call to backend
       const response = await axios.post(
-        'https://ai-study-assistant-xa02.onrender.com/api/generate',
+        `${import.meta.env.VITE_API_BASE_URL}/api/generate`,
         { content: notes, difficulty, isTopic },
         {
           signal: controller.signal,
@@ -321,6 +321,9 @@ export const Dashboard: React.FC = () => {
       } else if (err.response?.data) {
         errorName = err.response.data.error || 'Invalid AI response';
         errorDetails = err.response.data.errorDetails || 'The server returned an unparseable response.';
+      } else if (!err.response) {
+        errorName = 'Server Unavailable';
+        errorDetails = 'Could not establish connection to the AI Study Assistant backend. Since it is deployed on Render, the server might be spinning up after inactivity (this can take up to 50 seconds). Please wait a moment and try again.';
       }
 
       // Log request failure
