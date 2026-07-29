@@ -1609,7 +1609,7 @@ const ChatView: React.FC<{
 
     try {
       const documentContext = rawContent || summary;
-      const response = await axios.post('http://localhost:5000/api/chat', {
+      const response = await axios.post('https://ai-study-assistant-xa02.onrender.com/api/chat', {
         documentContext,
         question: questionText,
         history: messages,

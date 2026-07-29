@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Sparkles, 
-  ArrowRight, 
+import {
+  Sparkles,
+  ArrowRight,
   History as HistoryIcon,
   ChevronDown,
   ChevronUp,
@@ -129,18 +129,18 @@ export const Dashboard: React.FC = () => {
     reader.readAsText(file);
   };
 
-  const { 
-    setSession, 
-    addRequestLog, 
-    sessionHistory, 
-    requestHistory, 
+  const {
+    setSession,
+    addRequestLog,
+    sessionHistory,
+    requestHistory,
     generateTrigger,
     setDevMetrics
   } = useStudyStore();
 
   const [notes, setNotes] = useState('');
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
-  
+
   // Loading states
   const [isLoading, setIsLoading] = useState(false);
   const [loadingStage, setLoadingStage] = useState('');
@@ -188,7 +188,7 @@ export const Dashboard: React.FC = () => {
       if (timerRef.current) clearInterval(timerRef.current);
       return;
     }
-    
+
     const stages = [
       "Establishing link with Gemini API...",
       "Analyzing notes vocabulary and symbols...",
@@ -249,9 +249,9 @@ export const Dashboard: React.FC = () => {
       const isTopic = !notes.includes('\n') && notes.trim().length < 300;
       // API call to local Express backend on :5000
       const response = await axios.post(
-        'http://localhost:5000/api/generate',
+        'https://ai-study-assistant-xa02.onrender.com/api/generate',
         { content: notes, difficulty, isTopic },
-        { 
+        {
           signal: controller.signal,
           headers: { 'X-Request-ID': requestId }
         }
@@ -300,7 +300,7 @@ export const Dashboard: React.FC = () => {
         pdfPages: uploadedPdfInfo?.pageCount,
         pdfSize: uploadedPdfInfo?.size
       });
-      
+
       toast.success("Study session compiled successfully!");
       navigate('/study');
 
@@ -311,7 +311,7 @@ export const Dashboard: React.FC = () => {
       }
 
       const firstResponseTime = performance.now() - requestStartTime;
-      
+
       let errorName = 'Network error';
       let errorDetails = err.message || 'The secure backend could not be reached.';
 
@@ -363,7 +363,7 @@ export const Dashboard: React.FC = () => {
 
   return (
     <div className="w-full max-w-none px-4 sm:px-6 lg:px-8 xl:px-10 py-6 md:py-10 min-h-[85vh] flex flex-col justify-between">
-      
+
       {/* Background blobs for premium glassmorphic depth */}
       <div className="absolute top-0 right-0 w-[50vw] h-[50vh] bg-violet-600/5 rounded-full blur-3xl -z-10 pointer-events-none animate-pulse"></div>
       <div className="absolute bottom-10 left-10 w-[40vw] h-[40vh] bg-indigo-600/5 rounded-full blur-3xl -z-10 pointer-events-none"></div>
@@ -380,7 +380,7 @@ export const Dashboard: React.FC = () => {
           >
             {/* Hero Headers */}
             <div className="text-center space-y-4 max-w-4xl mx-auto w-full">
-              <motion.div 
+              <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 className="inline-flex items-center space-x-2 bg-violet-600/10 border border-violet-500/20 px-3.5 py-1.5 rounded-full text-violet-400 text-xs font-semibold uppercase tracking-wider"
@@ -405,7 +405,7 @@ export const Dashboard: React.FC = () => {
             {uploadedPdfInfo ? (
               <div className="max-w-2xl w-full mx-auto glass-premium p-6 sm:p-8 rounded-3xl relative border border-violet-500/20 shadow-[0_0_30px_rgba(139,92,246,0.15)] flex flex-col space-y-6">
                 {/* Hidden input for new uploads */}
-                <input 
+                <input
                   type="file"
                   ref={fileInputRef}
                   onChange={handleFileUpload}
@@ -438,7 +438,7 @@ export const Dashboard: React.FC = () => {
                     <h3 className="text-base font-bold text-white truncate leading-snug">
                       {uploadedPdfInfo.name}
                     </h3>
-                    
+
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-400">
                       <span className="font-mono">{uploadedPdfInfo.size}</span>
                       <span className="text-slate-700 dark:text-slate-700 light:text-slate-200">•</span>
@@ -460,11 +460,10 @@ export const Dashboard: React.FC = () => {
                       <button
                         key={level}
                         onClick={() => setDifficulty(level)}
-                        className={`text-xs font-semibold px-3.5 py-1.5 rounded-lg uppercase tracking-wide transition duration-155 ${
-                          difficulty === level 
-                            ? 'bg-violet-600 text-white font-bold' 
+                        className={`text-xs font-semibold px-3.5 py-1.5 rounded-lg uppercase tracking-wide transition duration-155 ${difficulty === level
+                            ? 'bg-violet-600 text-white font-bold'
                             : 'text-slate-400 hover:text-slate-200 dark:text-slate-400 light:text-slate-500 light:hover:text-slate-900'
-                        }`}
+                          }`}
                       >
                         {level}
                       </button>
@@ -484,7 +483,7 @@ export const Dashboard: React.FC = () => {
             ) : (
               <div className="max-w-5xl w-full mx-auto glass-premium p-5 sm:p-7 rounded-3xl relative focus-within:border-violet-500/40 focus-within:shadow-[0_0_25px_rgba(139,92,246,0.12)]">
                 <div className="relative">
-                  <input 
+                  <input
                     type="file"
                     ref={fileInputRef}
                     onChange={handleFileUpload}
@@ -501,7 +500,7 @@ export const Dashboard: React.FC = () => {
                     placeholder="Paste your study materials, lecture summaries or textbook formulas here... (Ctrl + Enter to trigger)"
                     className="w-full bg-slate-950/60 border border-slate-800 text-slate-100 rounded-2xl p-4 pr-20 text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-all duration-200 resize-none font-sans min-h-[120px] max-h-[260px] dark:bg-slate-950/60 dark:border-slate-800 dark:text-slate-100 light:bg-slate-50 light:border-slate-200 light:text-slate-900"
                   />
-                  
+
                   <div className="absolute top-4 right-4 flex items-center space-x-2">
                     <motion.button
                       whileHover={{ scale: 1.15, rotate: 10 }}
@@ -536,11 +535,10 @@ export const Dashboard: React.FC = () => {
                           whileTap={{ scale: 0.95 }}
                           key={level}
                           onClick={() => setDifficulty(level)}
-                          className={`text-xs font-semibold px-3.5 py-1.5 rounded-lg uppercase tracking-wide transition duration-150 ${
-                            difficulty === level 
-                              ? 'bg-violet-600 text-white font-bold' 
+                          className={`text-xs font-semibold px-3.5 py-1.5 rounded-lg uppercase tracking-wide transition duration-150 ${difficulty === level
+                              ? 'bg-violet-600 text-white font-bold'
                               : 'text-slate-400 hover:text-slate-200 dark:text-slate-400 light:text-slate-500 light:hover:text-slate-900'
-                          }`}
+                            }`}
                         >
                           {level}
                         </motion.button>
@@ -552,7 +550,7 @@ export const Dashboard: React.FC = () => {
                     <span className="text-[10px] text-slate-500 font-semibold font-mono">
                       {notes.length} characters
                     </span>
-                    
+
                     <button
                       onClick={handleGenerate}
                       className="w-full sm:w-auto inline-flex items-center justify-center space-x-2.5 btn-3d-violet px-7 py-3.5 rounded-2xl text-xs focus:outline-none focus:ring-2 focus:ring-violet-400 focus:ring-offset-2"
@@ -588,7 +586,7 @@ export const Dashboard: React.FC = () => {
                   <HistoryIcon className="w-4 h-4 text-violet-400" />
                   <h3 className="text-xs font-extrabold uppercase tracking-widest text-slate-400">Recent Ingested Sessions</h3>
                 </div>
-                
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {sessionHistory.slice(0, 4).map((session, idx) => (
                     <div
@@ -601,7 +599,7 @@ export const Dashboard: React.FC = () => {
                     >
                       <h4 className="text-sm font-bold text-slate-200 truncate group-hover:text-white dark:text-slate-200 light:text-slate-900">{session.title}</h4>
                       <p className="text-[10px] text-slate-500 mt-1 line-clamp-2 leading-relaxed">{session.summary}</p>
-                      
+
                       <div className="flex items-center justify-between mt-3 text-[10px] font-bold uppercase tracking-wider text-slate-500">
                         <span>{session.difficulty}</span>
                         <span>{session.estimated_study_time}</span>
@@ -688,12 +686,12 @@ export const Dashboard: React.FC = () => {
             className="flex-grow flex flex-col items-center justify-center max-w-xl w-full mx-auto py-10"
           >
             <div className="glass p-8 rounded-3xl border border-red-500/20 bg-slate-900/30 backdrop-blur-xl relative overflow-hidden w-full dark:border-red-500/20 light:bg-white light:border-red-200 light:shadow-xl">
-              
+
               <div className="flex flex-col items-center text-center space-y-6">
                 <div className="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
                   <AlertOctagon className="w-7 h-7 text-red-500" />
                 </div>
-                
+
                 <div className="space-y-1.5">
                   <h2 className="text-xl font-extrabold text-white tracking-tight dark:text-white light:text-slate-900">Study Node Ingest Blocked</h2>
                   <p className="text-xs text-slate-400 max-w-xs dark:text-slate-400 light:text-slate-500">
@@ -791,7 +789,7 @@ export const Dashboard: React.FC = () => {
               Clear Logs
             </button>
           </div>
-          
+
           <div className="border border-slate-900 rounded-2xl overflow-hidden bg-slate-950/20 divide-y divide-slate-900/50 text-[10px] max-h-40 overflow-y-auto dark:border-slate-900 light:bg-slate-50 light:border-slate-200 light:divide-slate-200">
             {requestHistory.map((log, idx) => (
               <div key={idx} className="px-4 py-2.5 flex items-center justify-between font-mono text-slate-500 dark:text-slate-500 light:text-slate-600">
@@ -801,13 +799,13 @@ export const Dashboard: React.FC = () => {
                   </span>
                   <span className="font-semibold text-slate-400 truncate dark:text-slate-400 light:text-slate-800">{log.topic}</span>
                 </div>
-                
+
                 <div className="flex items-center space-x-3 flex-shrink-0">
                   <span className="text-[9px] font-semibold">{log.responseTime}ms</span>
                   {log.status === 'success' ? (
                     <span className="px-1.5 py-0.5 text-[8px] bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-md font-bold uppercase">SUCCESS</span>
                   ) : (
-                    <span 
+                    <span
                       className="px-1.5 py-0.5 text-[8px] bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-md font-bold uppercase cursor-pointer"
                       title={log.errorType}
                     >
@@ -820,7 +818,7 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
       )}
-      
+
     </div>
   );
 };
