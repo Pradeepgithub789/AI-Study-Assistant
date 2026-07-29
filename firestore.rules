@@ -1,0 +1,56 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Check if the user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Fetch the request user profile from Firestore
+    function getUserProfile() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    // Check if the user is a moderator
+    function isModerator() {
+      return isAuthenticated() && getUserProfile().role == 'moderator';
+    }
+
+    // Users collection: All authenticated users can read and edit their profiles
+    match /users/{userId} {
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Textbook documents collection:
+    match /documents/{docId} {
+      // Anyone logged in can read notes (shared library vs personal list)
+      allow read: if isAuthenticated();
+      // Any logged in student/moderator can upload/publish
+      allow create, update: if isAuthenticated();
+      // Only the original author OR a moderator can delete notes
+      allow delete: if isAuthenticated() && (
+        resource.data.uploadedBy == request.auth.uid || 
+        isModerator()
+      );
+    }
+
+    // Q&A chat history logs:
+    match /qa_sessions/{sessionId} {
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow read, update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    // MCQ Quizzes logs:
+    match /quizzes/{quizId} {
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow read, update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+
+    // Flashcard deck revisions:
+    match /flashcards/{deckId} {
+      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      allow read, update, delete: if isAuthenticated() && resource.data.userId == request.auth.uid;
+    }
+  }
+}

@@ -1,0 +1,33 @@
+name: AI Study Assistant CI/CD
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code Repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js Environment
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+
+    - name: Install Frontend Dependencies
+      run: npm ci
+
+    - name: Run ESLint Checks
+      run: npm run lint
+
+    - name: Run Vitest Unit Tests
+      run: npx vitest run
+
+    - name: Verify Production Vite Bundle
+      run: npm run build
