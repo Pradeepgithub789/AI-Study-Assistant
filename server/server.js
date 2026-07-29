@@ -519,6 +519,14 @@ ${question}`;
     });
   }
 });
+
+app.get("/", (req, res) => {
+  res.json({
+    success: true,
+    message: "AI Study Assistant Backend is running!"
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Secure study assistant backend running on http://localhost:${PORT}`);
 });
