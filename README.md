@@ -4,6 +4,7 @@ An interactive, production-grade cognitive study workspace designed for engineer
 
 It features a secure Express backend that queries Google Gemini 2.0 Flash using structured schema configurations, verifies payload constraints via server/client Zod layers, and logs detailed performance diagnostics.
 
+Demo Link: https://drive.google.com/file/d/1h83anTYaTmNSZ1zaoSlioPWVjfTIkG8G/view?usp=sharing
 ---
 
 ## 1. System Architecture
